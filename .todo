@@ -1,0 +1,22 @@
+Features:
+  ☐ Log service
+  ☐ Implement push notifications
+  ☐ Implement Sentry
+  ☐ Get nearby cities by user geolocation
+  ☐ Ban system
+
+Refactoring:
+  ☐ OrderBy optional
+
+Deploy:
+
+Auth module:
+  ☐ Sign in with Google
+
+Story module:
+  ☐ Add show date to story model (is this a normal solution?)
+  ☐ Save "saw" field to storage or database (where is the best place to store it?)
+
+Production:
+  ☐ DB backups
+  ☐ Rancher backups

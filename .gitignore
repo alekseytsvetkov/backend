@@ -1,0 +1,34 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+/dist
+dist/*
+lib/
+
+# misc
+.DS_Store
+.env
+ngrok.yml
+.env.local
+.env.prod
+.env.development.local
+.env.test.local
+.env.production.local
+.vscode/
+.next/
+.cache/
+dist/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# testing databases
+*.sqlite

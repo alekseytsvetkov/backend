@@ -1,0 +1,176 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "darwin", "debian-openssl-1.1.x", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  username       String    @unique
+  name           String?
+  avatar         String?
+  bio            String?
+  phone          String    @unique
+  email          String?   @unique
+  verified       Boolean   @default(false)
+  wantedCount    Int       @default(0)
+  visitedCount   Int       @default(0)
+  rating         Int?      @default(0)
+  password       String
+  followersCount Int       @default(0)
+  followingCount Int       @default(0)
+  visited        Geoname[] @relation("VisitedGeoname")
+  wanted         Geoname[] @relation("WantedGeoname")
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @default(now()) @updatedAt
+}
+
+model ContinentCode {
+  id        String  @id @default(cuid())
+  code      String? @unique @db.Char(2)
+  name      String?
+  geonameId String?
+}
+
+model CountryInfo {
+  isoAlpha2          String  @id @unique @db.Char(2)
+  isoAlpha3          String? @db.Char(3)
+  isoNumeric         Int?
+  fipsCode           String?
+  country            String?
+  emoji              String?
+  emojiU             String?
+  capital            String?
+  area               Float?
+  population         Int?
+  continentCode      String? @db.Char(2)
+  tld                String?
+  currencyCode       String? @db.Char(3)
+  currencyName       String?
+  phone              String?
+  postal             String?
+  postalRegex        String?
+  languages          String?
+  neighbours         String?
+  equivalentFipsCode String?
+  geonameId          String?
+}
+
+model Geoname {
+  id             String          @id @unique
+  name           String?
+  asciiName      String?
+  alternateNames String?
+  overview       String?
+  latitude       Float?
+  longitude      Float?
+  fclass         String?         @db.Char(1)
+  fcode          String?         @db.Char(10)
+  countryCode    String?         @db.Char(2)
+  cc2            String?
+  admin1         String?
+  admin2         String?
+  admin3         String?
+  admin4         String?
+  population     BigInt?
+  elevation      Int?
+  gtopo30        Int?
+  timezone       String?
+  modifiedDate   DateTime?       @db.Date
+  wantedCount    Int             @default(0)
+  visitedCount   Int             @default(0)
+  images         Image[]
+  tags           Tag[]
+  userVisited    User[]          @relation("VisitedGeoname")
+  userWanted     User[]          @relation("WantedGeoname")
+  alternateName  AlternateName[]
+}
+
+model AlternateName {
+  id              String   @id @unique
+  isoLang         String?
+  alternateName   String?
+  isPreferredName Boolean?
+  isShortName     Boolean?
+  isColloquial    Boolean?
+  isHistoric      Boolean?
+  from            String?
+  to              String?
+  geoname         Geoname? @relation(fields: [geonameId], references: [id])
+  geonameId       String?
+}
+
+model Tag {
+  id            String            @id @default(cuid())
+  name          String            @unique
+  emoji         String
+  localizations TagLocalization[]
+  geonames      Geoname[]
+}
+
+model TagLocalization {
+  id     String @id @default(cuid())
+  locale Locale
+  name   String
+  tagId  String
+  tag    Tag    @relation(fields: [tagId], references: [id])
+}
+
+model Story {
+  id            String              @id @default(cuid())
+  previewTitle  String
+  previewImage  String
+  localizations StoryLocalization[]
+  steps         StoryStep[]
+}
+
+model StoryLocalization {
+  id           String  @id @default(cuid())
+  locale       Locale
+  previewTitle String
+  storyId      String?
+  story        Story?  @relation(fields: [storyId], references: [id])
+}
+
+model StoryStep {
+  id            String                  @id @default(cuid())
+  title         String
+  description   String
+  image         String
+  storyId       String?
+  story         Story?                  @relation(fields: [storyId], references: [id])
+  localizations StoryStepLocalization[]
+}
+
+model StoryStepLocalization {
+  id          String     @id @default(cuid())
+  locale      Locale
+  title       String
+  description String
+  storyStepId String?
+  storyStep   StoryStep? @relation(fields: [storyStepId], references: [id])
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String
+  geoname   Geoname? @relation(fields: [geonameId], references: [id])
+  geonameId String?
+}
+
+model Sms {
+  id        String   @id @default(cuid())
+  phone     String
+  code      String
+  confirmed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+enum Locale {
+  RU
+}
