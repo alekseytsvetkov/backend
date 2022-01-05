@@ -22,10 +22,19 @@
     "seed": "prisma db seed",
     "g": "graphql-codegen --config codegen.yml",
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\"",
-    "image": "ts-node prisma/image.ts"
+    "image": "ts-node prisma/image.ts",
+    "prepare": "husky install",
+    "commit": "cz",
+    "commit:signed": "cz -S"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog",
+      "defaultScope": "global"
+    }
   },
   "dependencies": {
     "@apollo/subgraph": "^0.1.2",
@@ -71,6 +80,8 @@
     "webpack-node-externals": "^3.0.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "^16.0.1",
+    "@commitlint/config-conventional": "^16.0.0",
     "@nestjs/cli": "^8.1.4",
     "@nestjs/schematics": "^8.0.4",
     "@nestjs/testing": "^8.2.0",
@@ -87,9 +98,12 @@
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "husky": "^7.0.4",
     "jest": "27.3.1",
     "prettier": "^2.4.1",
     "supertest": "^6.1.6",
