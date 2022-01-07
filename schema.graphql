@@ -1,0 +1,188 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Profile {
+  id: String!
+  name: String
+  avatar: String
+  provider: String!
+}
+
+type User {
+  id: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  name: String
+  avatar: String
+  bio: String
+  wantedCount: Int!
+  visitedCount: Int!
+  profiles: [Profile!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type UserConnection {
+  edges: [UserEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type AlternateName {
+  id: String!
+  isoLang: String
+  alternateName: String
+  isPreferredName: Boolean
+  isShortName: Boolean
+  isHistoric: Boolean
+}
+
+type Image {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  url: String!
+  city: [City!]
+}
+
+type City {
+  id: String!
+  name: String!
+  overview: String
+  population: BigInt!
+  wantedCount: Int!
+  visitedCount: Int!
+  images: [Image!]
+  latitude: Float
+  longitude: Float
+  userWanted: [User!]
+  userVisited: [User!]
+  alternateName: [AlternateName!]
+}
+
+"""The Integer as string"""
+scalar BigInt
+
+type CityEdge {
+  cursor: String!
+  node: City!
+}
+
+type CityConnection {
+  edges: [CityEdge!]
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type TagLocalization {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  locale: Locale!
+  name: String!
+}
+
+enum Locale {
+  EN
+  RU
+}
+
+type Tag {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  name: String!
+  emoji: String!
+  localizations: [TagLocalization!]
+}
+
+type Story {
+  id: ID!
+
+  """Identifies the date and time when the object was created."""
+  createdAt: DateTime!
+
+  """Identifies the date and time when the object was last updated."""
+  updatedAt: DateTime!
+  title: String!
+  description: String!
+}
+
+type Query {
+  me: User!
+  user(id: String!): User!
+  users(orderBy: UserOrder, query: String, last: Int, first: Int!, before: String, after: String, skip: Int): UserConnection!
+  city(id: String!): City!
+  cities(orderBy: CityOrder, query: String, last: Int, first: Int!, before: String, after: String, skip: Int, input: CitiesInput): CityConnection!
+  wanted(userId: String, orderBy: CityOrder, last: Int, first: Int!, before: String, after: String, skip: Int): CityConnection!
+  visited(userId: String, orderBy: CityOrder, last: Int, first: Int!, before: String, after: String, skip: Int): CityConnection!
+  nearby(orderBy: CityOrder, last: Int, first: Int!, before: String, after: String, skip: Int): CityConnection!
+  popular(orderBy: CityOrder, last: Int, first: Int!, before: String, after: String, skip: Int): CityConnection!
+  tags: [Tag!]!
+  stories: [Story!]!
+}
+
+input UserOrder {
+  direction: OrderDirection!
+}
+
+"""
+Possible directions in which to order a list of items when provided an `orderBy` argument.
+"""
+enum OrderDirection {
+  asc
+  desc
+}
+
+input CityOrder {
+  direction: OrderDirection!
+}
+
+input CitiesInput {
+  cityTagId: ID!
+}
+
+type Mutation {
+  logout: Boolean!
+  uploadPhoto(file: Upload!): Boolean!
+  deletePhoto: Boolean!
+  addCity(input: ActionCityInput!): City!
+  removeCity(input: ActionCityInput!): City!
+  moveCity(input: ActionCityInput!): City!
+}
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input ActionCityInput {
+  id: ID!
+  type: String!
+}

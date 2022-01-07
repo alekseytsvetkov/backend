@@ -1,29 +1,38 @@
-import { ValidationPipe } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
-import { CorsConfig, NestConfig } from './config/config.interface';
+import * as session from 'express-session';
+import * as connectRedis from 'connect-redis';
+import * as Redis from 'ioredis';
+import { ConfigService } from '@nestjs/config';
 
 declare const module: any;
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    cors: {
+      origin: '*',
+    },
+  });
 
-  // Validation
-  app.useGlobalPipes(new ValidationPipe());
+  const config = app.get(ConfigService);
 
-  const configService = app.get(ConfigService);
-  const nestConfig = configService.get<NestConfig>('nest');
-  const corsConfig = configService.get<CorsConfig>('cors');
+  const RedisStore = connectRedis(session);
 
-  // Cors
-  if (corsConfig.enabled) {
-    app.enableCors();
-  }
+  app.use(
+    session({
+      store: new RedisStore({
+        client: new Redis(config.get('db.redisUrl')),
+      }),
+      secret: config.get('auth.sessionSecret'),
+      name: 'appsessions',
+      resave: false,
+      saveUninitialized: false,
+    }),
+  );
 
   await app.startAllMicroservices();
-  await app.listen(process.env.PORT || nestConfig.port || 3000);
+  await app.listen(process.env.PORT || 3000);
 
   if (module.hot) {
     module.hot.accept();

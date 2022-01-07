@@ -1,16 +1,25 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { BaseModel } from '../../common/base.model';
+
+@ObjectType()
+export class Profile {
+  @Field()
+  id: string;
+
+  @Field({ nullable: true })
+  name?: string;
+
+  @Field({ nullable: true })
+  avatar?: string;
+
+  @Field()
+  provider: string;
+}
 
 @ObjectType()
 export class User extends BaseModel {
   @Field()
-  phone: string;
-
-  @Field({ nullable: true })
-  email?: string;
-
-  @Field()
-  username: string;
+  id: string;
 
   @Field({ nullable: true })
   name?: string;
@@ -21,15 +30,18 @@ export class User extends BaseModel {
   @Field({ nullable: true })
   bio?: string;
 
-  @Field()
-  rating: number;
-
   @Field({ defaultValue: 0 })
   wantedCount: number;
 
   @Field({ defaultValue: 0 })
   visitedCount: number;
 
-  @HideField()
-  password: string;
+  @Field()
+  createdAt: Date;
+
+  @Field()
+  updatedAt: Date;
+
+  @Field(() => [Profile], { nullable: true })
+  profiles?: Profile[];
 }

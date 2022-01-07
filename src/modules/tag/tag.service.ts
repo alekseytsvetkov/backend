@@ -1,12 +1,12 @@
 import { Injectable, UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { AuthGuard } from '../auth/guards';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class TagService {
   constructor(private prisma: PrismaService) {}
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AuthGuard)
   async findAll() {
     const tags = await this.prisma.tag.findMany({
       include: {

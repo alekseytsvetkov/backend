@@ -1,37 +1,35 @@
 import { StorageService } from './../storage/storage.service';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { User } from './models/user.model';
-import { PrismaService } from '../prisma/prisma.service';
 import { UseGuards } from '@nestjs/common';
-import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { UserEntity } from './user.decorator';
 import { UserService } from './user.service';
 import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { v4 as uuidv4 } from 'uuid';
 import { UserConnection } from './models/user-connection.model';
 import { UserOrder } from './dto/user-order.input';
-import { UpdateProfileInput } from './dto/update-profile.input';
+import { AuthGuard } from '../auth/guards';
+import { UserUpdateInput } from './dto/userUpdate.input';
 @Resolver(() => User)
 export class UserResolver {
   constructor(
     private readonly user: UserService,
-    private prisma: PrismaService,
     private storage: StorageService,
   ) {}
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AuthGuard)
   @Query(() => User)
   async me(@UserEntity() user: User): Promise<User> {
     return user;
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AuthGuard)
   @Query(() => User, { name: 'user' })
   findOne(@Args('id') id: string) {
     return this.user.findOne(id);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AuthGuard)
   @Query((returns) => UserConnection, { name: 'users' })
   findAll(
     @Args('skip', { nullable: true }) skip: number,
@@ -52,7 +50,7 @@ export class UserResolver {
     return this.user.findAll(pagination, query, orderBy);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AuthGuard)
   @Mutation((returns) => Boolean)
   async uploadPhoto(
     @UserEntity() user: User,
@@ -64,18 +62,18 @@ export class UserResolver {
     return await this.user.uploadPhoto(user, url);
   }
 
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(AuthGuard)
   @Mutation((returns) => Boolean)
   async deletePhoto(@UserEntity() user: User): Promise<boolean> {
     return this.user.deletePhoto(user);
   }
 
-  @UseGuards(GqlAuthGuard)
-  @Mutation((returns) => Boolean)
-  async updateProfile(
-    @UserEntity() user: User,
-    @Args('input') input: UpdateProfileInput,
-  ): Promise<boolean> {
-    return this.user.updateProfile(user, input);
-  }
+  // @UseGuards(AuthGuard)
+  // @Mutation((returns) => Boolean)
+  // async updateProfile(
+  //   @UserEntity() user: User,
+  //   @Args('input') input: UserUpdateInput,
+  // ): Promise<boolean> {
+  //   return this.user.updateProfile(user, input);
+  // }
 }

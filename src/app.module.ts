@@ -1,37 +1,35 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './modules/user/user.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import config from './config';
-import { GraphqlConfig } from './config/config.interface';
+import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
 import { CityModule } from './modules/city/city.module';
 import { TagModule } from './modules/tag/tag.module';
 import { StoryModule } from './modules/story/story.module';
 import { graphqlUploadExpress } from 'graphql-upload';
+import { config } from './config';
+import { AuthService } from './modules/auth/auth.service';
+import * as depthLimit from 'graphql-depth-limit';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: config,
+    }),
     GraphQLModule.forRootAsync({
-      useFactory: async (configService: ConfigService) => {
-        const graphqlConfig = configService.get<GraphqlConfig>('graphql');
-        // TODO: add introspection for production
-        return {
-          uploads: false,
-          installSubscriptionHandlers:
-            graphqlConfig.installSubscriptionHandlers,
-          buildSchemaOptions: {
-            numberScalarMode: 'integer',
-          },
-          sortSchema: graphqlConfig.sortSchema,
-          autoSchemaFile: graphqlConfig.autoSchemaFile || './schema.graphql',
-          debug: graphqlConfig.debug,
-          playground: graphqlConfig.playgroundEnabled,
-          context: ({ req }) => ({ req }),
-        };
-      },
-      inject: [ConfigService],
+      imports: [AuthModule],
+      inject: [AuthService],
+      useFactory: async () => ({
+        uploads: false,
+        installSubscriptionHandlers: true,
+        validationRules: [depthLimit(10)],
+        buildSchemaOptions: {
+          numberScalarMode: 'integer',
+        },
+        autoSchemaFile: './schema.graphql',
+        context: ({ req }) => ({ req }),
+      }),
     }),
     AuthModule,
     UserModule,
@@ -39,8 +37,6 @@ import { graphqlUploadExpress } from 'graphql-upload';
     TagModule,
     StoryModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
