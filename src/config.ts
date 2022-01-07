@@ -9,7 +9,7 @@ export const config = [
     clientID: process.env.GOOGLE_ID,
     clientSecret: process.env.GOOGLE_SECRET,
     callbackURL: `${process.env.API_URL}authend/google`,
-    scope: 'user:read:email',
+    scope: ['email', 'profile'],
   })),
   registerAs('base', () => ({
     instanceId: nanoid(10),
