@@ -18,6 +18,8 @@ type User {
   bio: String
   wantedCount: Int!
   visitedCount: Int!
+  followersCount: Int!
+  followingCount: Int!
   profiles: [Profile!]
 }
 
@@ -42,6 +44,23 @@ type UserConnection {
   edges: [UserEdge!]
   pageInfo: PageInfo!
   totalCount: Int!
+}
+
+type Token {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT refresh token"""
+  refreshToken: String!
+}
+
+type Auth {
+  """JWT access token"""
+  accessToken: String!
+
+  """JWT refresh token"""
+  refreshToken: String!
+  user: User!
 }
 
 type AlternateName {
@@ -171,7 +190,8 @@ input CitiesInput {
 }
 
 type Mutation {
-  logout: Boolean!
+  signInWithGoogle(idToken: String!): Auth!
+  refreshToken: Token!
   uploadPhoto(file: Upload!): Boolean!
   deletePhoto: Boolean!
   addCity(input: ActionCityInput!): City!

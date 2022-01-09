@@ -1,13 +1,11 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { AuthService } from '../auth.service';
+import { Injectable, ExecutionContext } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
-
-  async canActivate(ctx: ExecutionContext) {
-    const { token } = ctx.getArgs()[2];
-    const { userId } = await this.authService.getTokenData(token);
-    return !!userId;
+export class GqlAuthGuard extends AuthGuard('jwt') {
+  getRequest(context: ExecutionContext) {
+    const ctx = GqlExecutionContext.create(context);
+    return ctx.getContext().req;
   }
 }

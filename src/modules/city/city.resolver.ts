@@ -8,37 +8,37 @@ import { ActionCityInput } from './dto/action-city.input';
 import { CitiesInput } from './dto/cities.input';
 import { CityConnection } from './models/city-connection.model';
 import { CityOrder } from './dto/city-order.input';
-import { AuthGuard } from '../auth/guards';
+import { GqlAuthGuard } from '../auth/guards';
 
 @Resolver(() => City)
 export class CityResolver {
   constructor(private readonly city: CityService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => City)
   addCity(@UserEntity() user: User, @Args('input') input: ActionCityInput) {
     return this.city.addCity(user, input);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => City)
   removeCity(@UserEntity() user: User, @Args('input') input: ActionCityInput) {
     return this.city.removeCity(user, input);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => City)
   moveCity(@UserEntity() user: User, @Args('input') input: ActionCityInput) {
     return this.city.moveCity(user, input);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query(() => City, { name: 'city' })
   findOne(@Args('id') id: string) {
     return this.city.findOne(id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => CityConnection, { name: 'cities' })
   findAll(
     @Args('input', { nullable: true }) input: CitiesInput,
@@ -60,7 +60,7 @@ export class CityResolver {
     return this.city.findAll(input, pagination, query, orderBy);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => CityConnection, { name: 'wanted' })
   wanted(
     @Args('skip', { nullable: true }) skip: number,
@@ -81,7 +81,7 @@ export class CityResolver {
     return this.city.findWanted(pagination, orderBy, userId, user);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => CityConnection, { name: 'visited' })
   visited(
     @Args('skip', { nullable: true }) skip: number,
@@ -102,7 +102,7 @@ export class CityResolver {
     return this.city.findVisited(pagination, orderBy, userId, user);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => CityConnection, { name: 'nearby' })
   nearby(
     @Args('skip', { nullable: true }) skip: number,
@@ -122,7 +122,7 @@ export class CityResolver {
     return this.city.findNearby(pagination, orderBy, user);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => CityConnection, { name: 'popular' })
   popular(
     @Args('skip', { nullable: true }) skip: number,

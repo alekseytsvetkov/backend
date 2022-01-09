@@ -22,19 +22,25 @@ export class User extends BaseModel {
   id: string;
 
   @Field({ nullable: true })
-  name?: string;
+  name: string;
 
   @Field({ nullable: true })
   avatar: string;
 
   @Field({ nullable: true })
-  bio?: string;
+  bio: string;
 
   @Field({ defaultValue: 0 })
   wantedCount: number;
 
   @Field({ defaultValue: 0 })
   visitedCount: number;
+
+  @Field({ defaultValue: 0 })
+  followersCount: number;
+
+  @Field({ defaultValue: 0 })
+  followingCount: number;
 
   @Field()
   createdAt: Date;

@@ -19,4 +19,9 @@ export const config = [
   registerAs('db', () => ({
     redisUrl: process.env.REDIS_URL,
   })),
+  registerAs('security', () => ({
+    jwtAccessSecret: process.env.JWT_ACCESS_SECRET,
+    expiresIn: process.env.EXPIRES_IN,
+    refreshIn: process.env.REFRESH_IN,
+  })),
 ];

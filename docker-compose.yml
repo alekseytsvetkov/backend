@@ -38,14 +38,6 @@ services:
     ports:
       - ${PRISMA_STUDIO_PORT}:5555
 
-  redis:
-    container_name: 'skeetry-redis'
-    image: 'redis'
-    ports:
-      - '127.0.0.1:6379:6379'
-    volumes:
-      - 'redisdata:/data'
-
 volumes:
   pgdata: {}
   redisdata: {}

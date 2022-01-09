@@ -8,7 +8,7 @@ import { GraphQLUpload, FileUpload } from 'graphql-upload';
 import { v4 as uuidv4 } from 'uuid';
 import { UserConnection } from './models/user-connection.model';
 import { UserOrder } from './dto/user-order.input';
-import { AuthGuard } from '../auth/guards';
+import { GqlAuthGuard } from '../auth/guards';
 import { UserUpdateInput } from './dto/userUpdate.input';
 @Resolver(() => User)
 export class UserResolver {
@@ -17,19 +17,19 @@ export class UserResolver {
     private storage: StorageService,
   ) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query(() => User)
   async me(@UserEntity() user: User): Promise<User> {
     return user;
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query(() => User, { name: 'user' })
   findOne(@Args('id') id: string) {
     return this.user.findOne(id);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Query((returns) => UserConnection, { name: 'users' })
   findAll(
     @Args('skip', { nullable: true }) skip: number,
@@ -50,7 +50,7 @@ export class UserResolver {
     return this.user.findAll(pagination, query, orderBy);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation((returns) => Boolean)
   async uploadPhoto(
     @UserEntity() user: User,
@@ -62,13 +62,13 @@ export class UserResolver {
     return await this.user.uploadPhoto(user, url);
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(GqlAuthGuard)
   @Mutation((returns) => Boolean)
   async deletePhoto(@UserEntity() user: User): Promise<boolean> {
     return this.user.deletePhoto(user);
   }
 
-  // @UseGuards(AuthGuard)
+  // @UseGuards(GqlAuthGuard)
   // @Mutation((returns) => Boolean)
   // async updateProfile(
   //   @UserEntity() user: User,

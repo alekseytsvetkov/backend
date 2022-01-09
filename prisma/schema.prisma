@@ -8,14 +8,6 @@ datasource db {
   url      = env("POSTGRES_URL")
 }
 
-model Token {
-  id        String   @id @default(cuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-}
-
 model User {
   id             String    @id @default(cuid())
   name           String?
@@ -28,7 +20,6 @@ model User {
   visited        Geoname[] @relation("VisitedGeoname")
   wanted         Geoname[] @relation("WantedGeoname")
   profiles       Profile[]
-  tokens         Token[]
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @default(now()) @updatedAt
 }
@@ -36,7 +27,6 @@ model User {
 model Profile {
   id           String  @id @default(cuid())
   provider     String
-  serviceId    String
   name         String?
   avatar       String?
   email        String?
